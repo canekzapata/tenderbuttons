@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PIXEL</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta property="og:title" content="Pixel">
+  <meta property="og:type" content="article" />
+  <meta property="og:description" content="a poem from the tender buttons collection by canekzapata.net">
+  <meta property="og:image" content="pixel.png">
+  <meta property="og:url" content="https://canekzapata.net/tenderbuttons/pixel/index.html">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background-color: #000;
+      color: #fff;
+      font-family: monospace;
+      cursor: pointer;
+    }
+
+    #canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    #poem {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 80%;
+      padding: 2rem;
+      box-sizing: border-box;
+      font-family: monospace;
+      white-space: pre-wrap;
+      font-size: 2.2vmax;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.9);
+      z-index: 100;
+      text-align: center;
+      line-height: 1.6;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    #poem.visible {
+      opacity: 1;
+    }
+
+    #instruction {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #666;
+      font-family: monospace;
+      font-size: 0.9rem;
+      z-index: 200;
+      opacity: 0.7;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.8; }
+    }
+
+    #title {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: monospace;
+      font-size: 4vmax;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.9);
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    #title.visible {
+      opacity: 1;
+    }
+
+    .pixel {
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .connection-line {
+      position: absolute;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transform-origin: left center;
+      pointer-events: none;
+      z-index: 50;
+      opacity: 0;
+      animation: fadeInLine 2s ease-in-out forwards;
+    }
+
+    @keyframes fadeInLine {
+      to { opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      #poem {
+        font-size: 4vw;
+        padding: 1rem;
+      }
+      
+      #title {
+        font-size: 8vw;
+      }
+      
+      #instruction {
+        font-size: 0.8rem;
+        bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div id="title">PIXEL</div>
+  <div id="poem"></div>
+  <div id="instruction">haz click hasta abajo</div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const poemEl = document.getElementById('poem');
+    const titleEl = document.getElementById('title');
+    const instructionEl = document.getElementById('instruction');
+    
+    // Ajustar canvas al tamaño de la ventana
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const verses = [
+      "A pixel is not a dot.",
+      "A dot is not enough.",
+      "A pixel is maybe the smallest decision.",
+      "Each pixel is a vote for presence.",
+      "Pixels do not touch but they imply touching.",
+      "Red pixel. Green pixel. Blue pixel.",
+      "Together they lie.",
+      "You never see the pixel.",
+      "You see the chorus."
+    ];
+
+    let currentVerse = -1;
+    let pixels = [];
+    let connections = [];
+    let animationId;
+    let isAnimating = false;
+
+    class Pixel {
+      constructor(x, y, color, size = 3, delay = 0) {
+        this.startX = x + (Math.random() - 0.5) * 200;
+        this.startY = y + (Math.random() - 0.5) * 200;
+        this.x = this.startX;
+        this.y = this.startY;
+        this.targetX = x;
+        this.targetY = y;
+        this.color = color;
+        this.size = size;
+        this.alpha = 0;
+        this.targetAlpha = Math.random() * 0.8 + 0.4;
+        this.delay = delay;
+        this.age = 0;
+        this.glowPhase = Math.random() * Math.PI * 2;
+        this.settled = false;
+      }
+
+      update() {
+        this.age++;
+        
+        if (this.age < this.delay) return;
+        
+        // Movimiento hacia posición objetivo
+        const dx = this.targetX - this.x;
+        const dy = this.targetY - this.y;
+        this.x += dx * 0.03;
+        this.y += dy * 0.03;
+        
+        // Determinar si está "asentado"
+        if (Math.abs(dx) < 2 && Math.abs(dy) < 2) {
+          this.settled = true;
+        }
+        
+        // Fade in
+        if (this.alpha < this.targetAlpha) {
+          this.alpha += 0.02;
+        }
+        
+        // Efecto de brillo
+        this.glowPhase += 0.05;
+        this.currentGlow = Math.sin(this.glowPhase) * 0.3 + 0.7;
+      }
+
+      draw() {
+        if (this.age < this.delay || this.alpha <= 0) return;
+        
+        // Dibujar glow
+        const glowSize = this.size * 2 * this.currentGlow;
+        const gradient = ctx.createRadialGradient(
+          this.x, this.y, 0,
+          this.x, this.y, glowSize
+        );
+        
+        const r = parseInt(this.color.substring(1,3), 16);
+        const g = parseInt(this.color.substring(3,5), 16);
+        const b = parseInt(this.color.substring(5,7), 16);
+        
+        gradient.addColorStop(0, `rgba(${r},${g},${b},${this.alpha})`);
+        gradient.addColorStop(0.5, `rgba(${r},${g},${b},${this.alpha * 0.5})`);
+        gradient.addColorStop(1, 'rgba(255,255,255,0)');
+        
+        ctx.fillStyle = gradient;
+        ctx.fillRect(this.x - glowSize, this.y - glowSize, glowSize * 2, glowSize * 2);
+        
+        // Pixel central
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x - this.size/2, this.y - this.size/2, this.size, this.size);
+      }
+    }
+
+    function createConnections() {
+      // Limpiar conexiones existentes
+      document.querySelectorAll('.connection-line').forEach(line => line.remove());
+      
+      if (pixels.length < 2) return;
+      
+      // Crear conexiones entre píxeles cercanos
+      for (let i = 0; i < pixels.length; i++) {
+        for (let j = i + 1; j < pixels.length; j++) {
+          const p1 = pixels[i];
+          const p2 = pixels[j];
+          
+          if (!p1.settled || !p2.settled) continue;
+          
+          const distance = Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+          
+          // Solo conectar píxeles que estén relativamente cerca
+          if (distance < 150 && Math.random() < 0.4) {
+            createConnectionLine(p1.x, p1.y, p2.x, p2.y);
+          }
+        }
+      }
+    }
+
+    function createConnectionLine(x1, y1, x2, y2) {
+      const line = document.createElement('div');
+      line.className = 'connection-line';
+      
+      const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+      const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+      
+      line.style.left = x1 + 'px';
+      line.style.top = y1 + 'px';
+      line.style.width = length + 'px';
+      line.style.transform = `rotate(${angle}deg)`;
+      line.style.animationDelay = Math.random() * 2 + 's';
+      
+      document.body.appendChild(line);
+      
+      // Remover después de un tiempo
+      setTimeout(() => {
+        if (line.parentNode) {
+          line.remove();
+        }
+      }, 5000);
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      pixels.forEach(pixel => {
+        pixel.update();
+        pixel.draw();
+      });
+      
+      animationId = requestAnimationFrame(animate);
+    }
+
+    function typewriter(text, callback) {
+      if (isAnimating) return;
+      isAnimating = true;
+      
+      poemEl.textContent = '';
+      poemEl.classList.add('visible');
+      
+      let i = 0;
+      const timer = setInterval(() => {
+        poemEl.textContent += text[i];
+        i++;
+        if (i >= text.length) {
+          clearInterval(timer);
+          isAnimating = false;
+          if (callback) {
+            setTimeout(callback, 800);
+          }
+        }
+      }, 80);
+    }
+
+    function handleVerseActions(verseIndex) {
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      
+      switch(verseIndex) {
+        case 0: // "A pixel is not a dot."
+          pixels.push(new Pixel(
+            centerX + 100, 
+            centerY - 50, 
+            '#ffffff', 
+            4, 
+            30
+          ));
+          break;
+          
+        case 1: // "A dot is not enough."
+          // Crear dúo de píxeles brillantes
+          const colors1 = ['#ff6b6b', '#4ecdc4'];
+          pixels.push(new Pixel(centerX - 80, centerY + 60, colors1[0], 5, 0));
+          pixels.push(new Pixel(centerX + 80, centerY + 60, colors1[1], 5, 20));
+          break;
+          
+        case 2: // "A pixel is maybe the smallest decision."
+          // Más píxeles dispersos
+          const colors2 = ['#ffe66d', '#ff6b9d', '#c44569', '#6c5ce7'];
+          for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI * 2 * i) / 6;
+            const radius = 120;
+            const x = centerX + Math.cos(angle) * radius;
+            const y = centerY + Math.sin(angle) * radius;
+            pixels.push(new Pixel(x, y, colors2[i % colors2.length], 4, i * 15));
+          }
+          break;
+          
+        case 3: // "Each pixel is a vote for presence."
+          // Los píxeles se agrupan
+          setTimeout(() => {
+            pixels.forEach((pixel, index) => {
+              const groupX = centerX + (Math.random() - 0.5) * 100;
+              const groupY = centerY + (Math.random() - 0.5) * 100;
+              pixel.targetX = groupX;
+              pixel.targetY = groupY;
+            });
+          }, 500);
+          break;
+          
+        case 4: // "Pixels do not touch but they imply touching."
+          // Crear conexiones
+          setTimeout(() => {
+            createConnections();
+            // Crear conexiones periódicamente
+            const connectionInterval = setInterval(() => {
+              if (currentVerse > 4) {
+                clearInterval(connectionInterval);
+                return;
+              }
+              createConnections();
+            }, 3000);
+          }, 1000);
+          break;
+          
+        case 5: // "Red pixel. Green pixel. Blue pixel."
+          // Píxeles RGB específicos
+          setTimeout(() => {
+            pixels.push(new Pixel(centerX - 100, centerY - 80, '#ff3333', 6, 0));
+          }, 300);
+          setTimeout(() => {
+            pixels.push(new Pixel(centerX, centerY - 80, '#33ff33', 6, 0));
+          }, 800);
+          setTimeout(() => {
+            pixels.push(new Pixel(centerX + 100, centerY - 80, '#3333ff', 6, 0));
+          }, 1300);
+          break;
+          
+        case 6: // "Together they lie."
+          // Todos los píxeles se mueven juntos
+          setTimeout(() => {
+            const newCenterX = centerX + (Math.random() - 0.5) * 200;
+            const newCenterY = centerY + (Math.random() - 0.5) * 200;
+            pixels.forEach(pixel => {
+              pixel.targetX = newCenterX + (Math.random() - 0.5) * 60;
+              pixel.targetY = newCenterY + (Math.random() - 0.5) * 60;
+            });
+          }, 500);
+          break;
+          
+        case 7: // "You never see the pixel."
+          // Los píxeles se vuelven muy pequeños
+          setTimeout(() => {
+            pixels.forEach(pixel => {
+              pixel.size = 1;
+              pixel.targetAlpha = 0.3;
+            });
+          }, 500);
+          break;
+          
+        case 8: // "You see the chorus."
+          // Explosión final de píxeles pequeños
+          setTimeout(() => {
+            for (let i = 0; i < 50; i++) {
+              const angle = Math.random() * Math.PI * 2;
+              const radius = Math.random() * 300 + 50;
+              const x = centerX + Math.cos(angle) * radius;
+              const y = centerY + Math.sin(angle) * radius;
+              const colors = ['#ffffff', '#ffff00', '#ff00ff', '#00ffff'];
+              pixels.push(new Pixel(
+                x, y, 
+                colors[Math.floor(Math.random() * colors.length)], 
+                2, 
+                Math.random() * 60
+              ));
+            }
+            
+            // Crear muchas conexiones
+            setTimeout(() => {
+              for (let i = 0; i < 20; i++) {
+                setTimeout(() => createConnections(), i * 200);
+              }
+            }, 1000);
+          }, 500);
+          break;
+      }
+    }
+
+    function showCompletePoem() {
+      // Limpiar todo
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      cancelAnimationFrame(animationId);
+      pixels = [];
+      document.querySelectorAll('.connection-line').forEach(line => line.remove());
+      
+      // Ocultar instrucciones
+      instructionEl.style.opacity = '0';
+      
+      // Mostrar poema completo
+      const completePoem = `PIXEL
+
+A pixel is not a dot.
+A dot is not enough.
+
+A pixel is maybe the smallest decision.
+Each pixel is a vote for presence.
+
+Pixels do not touch but they imply touching.
+
+Red pixel. Green pixel. Blue pixel.
+Together they lie.
+
+You never see the pixel.
+You see the chorus.`;
+      
+      poemEl.style.fontSize = '2vmax';
+      poemEl.style.lineHeight = '1.5';
+      typewriter(completePoem);
+    }
+
+    function nextVerse() {
+      if (isAnimating) return;
+      
+      if (currentVerse === -1) {
+        // Mostrar título y comenzar
+        titleEl.classList.add('visible');
+        instructionEl.textContent = 'click para continuar';
+        currentVerse = 0;
+        animate();
+        return;
+      }
+      
+      if (currentVerse < verses.length) {
+        poemEl.classList.remove('visible');
+        titleEl.classList.remove('visible');
+        
+        setTimeout(() => {
+          typewriter(verses[currentVerse], () => {
+            handleVerseActions(currentVerse);
+            
+            // Si es el último verso, cambiar instrucción
+            if (currentVerse === verses.length) {
+              setTimeout(() => {
+                instructionEl.textContent = 'click para ver el poema completo';
+                instructionEl.style.opacity = '0.7';
+              }, 2000);
+            }
+          });
+          currentVerse++;
+        }, 300);
+      } else if (currentVerse === verses.length) {
+        // Mostrar poema completo
+        showCompletePoem();
+        currentVerse++;
+      }
+    }
+
+    // Event listeners
+    document.addEventListener('click', nextVerse);
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        nextVerse();
+      }
+    });
+
+    // Touch support para móviles
+    document.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      nextVerse();
+    });
+  </script>
+</body>
+</html>
