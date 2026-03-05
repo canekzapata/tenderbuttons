@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BUTTONS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta property="og:title" content="Buttons">
+<meta property="og:type" content="article" />
+<meta property="og:description" content="a poem from the tender buttons collection by canekzapata.net">
+<meta property="og:image" content="buttons.png">
+<meta property="og:url" content="https://canekzapata.net/tenderbuttons/buttons/index.html">
+<meta name="twitter:card" content="summary_large_image">
+
+  <style>
+    body {
+      background: #111;
+      color: #eee;
+      font-family: monospace;
+      padding: 2rem;
+    }
+    .hidden { display: none; }
+    button {
+      background: #333;
+      color: #eee;
+      border: 2px solid #555;
+      padding: 0.5rem 1rem;
+      margin: .5rem;
+      cursor: pointer;
+      white-space: nowrap;
+      font-size: 1rem;
+      transition: transform 0.1s, background-color 0.3s;
+    }
+    button:active {
+      transform: scale(0.95);
+    }
+    .material-button.silk {
+      background: linear-gradient(135deg, #f0e6f6, #d9c2e0);
+      color: #333;
+      font-style: italic;
+    }
+    .material-button.wood {
+      background: linear-gradient(45deg, #8b5e3c, #a67c52);
+      color: #fff;
+      font-family: 'Courier New', monospace;
+    }
+    .material-button.chrome {
+      background: linear-gradient(45deg, #ccc, #eee);
+      color: black;
+      border: 1px solid #888;
+      text-transform: uppercase;
+    }
+    .circle-btn, .btn-circle, .outline-btn {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid #eee;
+      margin: 2rem auto;
+      cursor: pointer;
+    }
+    .btn-circle.with-holes {
+      position: relative;
+    }
+    .btn-circle.with-holes .hole {
+      width: 12px;
+      height: 12px;
+      background: #111;
+      border-radius: 50%;
+      position: absolute;
+    }
+    .btn-circle.with-holes .hole:nth-child(1) { top: 25%; left: 25%; }
+    .btn-circle.with-holes .hole:nth-child(2) { top: 25%; right: 25%; }
+    .btn-circle.with-holes .hole:nth-child(3) { bottom: 25%; left: 25%; }
+    .btn-circle.with-holes .hole:nth-child(4) { bottom: 25%; right: 25%; }
+    .circle-display {
+      display: flex;
+      justify-content: center;
+      gap: 4rem;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+
+        .align-zone {
+      border: 2px dashed #aaa;
+      height: 120px;
+      margin-top: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .browser-btn {
+  font-size: 2rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: #222;
+  border: 2px solid #555;
+  color: #eee;
+  transition: background-color 0.3s, transform 0.1s;
+}
+.browser-btn:hover {
+  background-color: #444;
+}
+.browser-btn:active {
+  transform: scale(0.95);
+}
+
+.popup {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #222;
+  border: 2px solid #aaa;
+  padding: 2rem;
+  z-index: 1000;
+  text-align: center;
+  border-radius: 1rem;
+  box-shadow: 0 0 20px #000;
+}
+.popup-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: #eee;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+
+
+#btn-gently {
+  transition: background 0.3s;
+}
+#btn-gently:active {
+  background: #555;
+}
+
+#maybe-dialog {
+  margin-top: 1rem;
+}
+
+#word-options button {
+  margin: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #888;
+  background-color: #222;
+  color: #eee;
+  cursor: pointer;
+  border-radius: 0.5rem;
+}
+.strike {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+  </style>
+</head>
+<body>
+
+<section id="verse0">
+  <button id="btn0">BUTTONS</button>
+  <p id="text0"></p>
+</section>
+<section id="verse1" class="hidden">
+  <button id="btn-hole">Not the hole</button>
+  <button id="btn-hold" style="display:none;">Not the hold</button>
+  <button id="btn-fold" style="display:none;">Not the fold</button>
+  <p id="text1"></p>
+</section>
+<section id="verse2" class="hidden">
+  <button id="btn2" class="circle-btn">⭕</button>
+  <p id="text2"></p>
+</section>
+<section id="verse3" class="hidden">
+  <div class="dropzone" id="dropzone">
+    <button id="dragbtn" draggable="true">Drag me</button>
+  </div>
+  <p id="text3"></p>
+</section>
+<section id="verse4" class="hidden">
+  <div id="btn-materials">
+    <button class="material-button silk" onclick="revealText5(this, 'Silken button')">Silken</button>
+    <button class="material-button wood" onclick="revealText5(this, 'Wooden button')">Wooden</button>
+    <button class="material-button chrome" onclick="revealText5(this, 'Chrome button in the chrome of no cloth.')">Chrome</button>
+  </div>
+  <p id="text5"></p>
+</section>
+<section id="verse6" class="hidden">
+  <div class="circle-display">
+    <button class="btn-circle with-holes" id="btn-holes">
+      <div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div>
+    </button>
+    <button class="btn-circle" id="btn-nohole"></button>
+  </div>
+  <p id="text6"></p>
+</section>
+<section id="verse7" class="hidden">
+  <div style="display: flex; justify-content: center;">
+    <div style="width: 50%; display: flex; justify-content: center;">
+      <button class="outline-btn" id="btn-outline-hole" style="background: transparent; border: 3px solid #eee;"></button>
+    </div>
+  </div>
+  <p id="text7"></p>
+</section>
+<!-- verses 8... -->
+<section id="verse8" class="hidden">
+  <div id="align-source" style="display: flex; flex-direction: column; justify-content: space-between; height: 150px; margin: 2rem 0; align-items: center;">
+    <button id="align-btn1" draggable="true">⇦</button>
+    <button id="align-btn2" draggable="true">⇨</button>
+  </div>
+  <div class="align-zone" id="align-zone" style="height: 120px;"></div>
+  <p id="text8"></p>
+</section>
+
+<section id="verse9" class="hidden">
+  <div id="checkbox-stage">
+    <label><input type="checkbox" id="cb-one"> One</label>
+    <div id="cb-two-wrap" class="hidden">
+      <label><input type="checkbox" id="cb-two"> Two</label>
+    </div>
+    <p id="text9"></p>
+    <div id="cb-three-wrap" class="hidden">
+      <label><input type="checkbox" class="cb-three"> A</label>
+      <label><input type="checkbox" class="cb-three"> B</label>
+      <label><input type="checkbox" class="cb-three"> C</label>
+    </div>
+    <p id="text10"></p>
+  </div>
+</section>
+
+<section id="verse10" class="hidden">
+  <div id="browser-buttons">
+    <button id="btn-back">←</button>
+    <button id="btn-refresh" style="visibility:hidden;">⟳</button>
+    <button id="btn-stop" style="visibility:hidden;">■</button>
+  </div>
+  <p id="text11a"></p>
+  <p id="text11b"></p>
+  <p id="text11c"></p>
+</section>
+
+<section id="verse11" class="hidden">
+  <button id="btn-scroll-up">⬆</button>
+  <div id="popup-up" class="hidden popup">
+    <button id="btn-scroll-down">⬇</button>
+  </div>
+  <p id="text12"></p>
+</section>
+
+<section id="verse12" class="hidden">
+  <button id="btn-gently">Hold gently</button>
+  <p id="text13"></p>
+</section>
+
+<section id="verse13" class="hidden">
+  <div id="popup-verse13" class="popup hidden">
+    <button id="btn-close-popup" class="popup-close">✖</button>
+    <div id="inner-popup-buttons" class="hidden" style="margin-top: 2rem;">
+      <button class="popup-option">Option A</button>
+      <button class="popup-option">Option B</button>
+    </div>
+  </div>
+  <p id="text14"></p>
+</section>
+
+
+<section id="verse14" class="hidden">
+  <button id="btn-maybe">Maybe</button>
+  <div id="maybe-dialog" class="hidden">
+    <p>Maybe?</p>
+    <button id="btn-yes">Yes</button>
+    <button id="btn-no">No</button>
+  </div>
+  <p id="text15"></p>
+</section>
+
+<section id="verse15" class="hidden">
+  <button id="btn-because">Because</button>
+  <p id="text16"></p>
+</section>
+
+<section id="verse16" class="hidden">
+  <p id="text16-content"></p>
+  <button id="btn-close-popup2" class="hidden">✖</button>
+
+  <div id="word-options" class="hidden" style="margin-top: 2rem;">
+    <button class="word-option">guess</button>
+    <button class="word-option">maybe</button>
+    <button class="word-option">button</button>
+    <button class="word-option">open</button>
+  </div>
+  <p id="text17"></p>
+</section>
+<section id="verse17" class="hidden">
+  <p id="text18"></p>
+  <p id="text19"></p>
+  <p id="text20"></p>
+</section>
+
+<section id="verse18" class="hidden">
+  <div id="crazy-checkboxes" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #111; z-index: 1000; overflow: hidden;"></div>
+  <button id="btn-final" class="hidden" style="position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 1001; font-size: 1.5rem; padding: 1rem 2rem;">button</button>
+  <p id="text21" style="position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); z-index: 1001; text-align: center;" class="hidden"></p>
+</section>
+
+
+<script>
+function typewriter(el, text, speed = 50, cb) {
+  el.textContent = '';
+  let i = 0;
+  const timer = setInterval(() => {
+    el.textContent += text[i++];
+    if (i >= text.length) {
+      clearInterval(timer);
+      if (cb) cb();
+    }
+  }, speed);
+}
+
+function autoScroll(element) {
+  setTimeout(() => {
+    element.scrollIntoView({ 
+      behavior: 'smooth', 
+      block: 'start' 
+    });
+  }, 300);
+}
+
+function revealText5(button, text) {
+  const el = document.getElementById('text5');
+  button.disabled = true;
+  if (text.includes('chrome')) {
+    typewriter(el, "Silken button, wooden button, chrome button in the chrome of no cloth.", 40, () => {
+      const verse6 = document.getElementById('verse6');
+      verse6.classList.remove('hidden');
+      autoScroll(verse6);
+    });
+  } else {
+    typewriter(el, text, 40);
+  }
+}
+
+let pressStart;
+
+window.addEventListener('DOMContentLoaded', () => {
+  const btn0 = document.getElementById('btn0');
+  const text0 = document.getElementById('text0');
+  const verse1 = document.getElementById('verse1');
+
+  btn0.addEventListener('click', () => {
+    btn0.disabled = true;
+    typewriter(text0, "A button is what a button is when a button is.", 40, () => {
+      verse1.classList.remove('hidden');
+      autoScroll(verse1);
+    });
+  });
+
+  const btnHole = document.getElementById('btn-hole');
+  const btnHold = document.getElementById('btn-hold');
+  const btnFold = document.getElementById('btn-fold');
+  const text1 = document.getElementById('text1');
+  const verse2 = document.getElementById('verse2');
+
+  btnHole.addEventListener('click', () => {
+    btnHole.disabled = true;
+    btnHold.style.display = 'inline-block';
+  });
+
+  btnHold.addEventListener('mousedown', () => pressStart = Date.now());
+  btnHold.addEventListener('mouseup', () => {
+    if (Date.now() - pressStart >= 2000) {
+      btnHold.disabled = true;
+      btnFold.style.display = 'inline-block';
+    }
+  });
+
+  btnFold.addEventListener('click', () => {
+    btnFold.disabled = true;
+    typewriter(text1, "Not the hole, not the hold, not the fold.", 40, () => {
+      verse2.classList.remove('hidden');
+      autoScroll(verse2);
+    });
+  });
+
+  const btn2 = document.getElementById('btn2');
+  const text2 = document.getElementById('text2');
+  const verse3 = document.getElementById('verse3');
+  btn2.addEventListener('click', () => {
+    btn2.disabled = true;
+    
+    // Animar el crecimiento del círculo rojo
+    const innerCircle = btn2.querySelector('::before') || btn2;
+    btn2.style.position = 'relative';
+    btn2.style.overflow = 'hidden';
+    
+    // Crear el círculo rojo interno
+    const redCircle = document.createElement('div');
+    redCircle.style.position = 'absolute';
+    redCircle.style.top = '50%';
+    redCircle.style.left = '50%';
+    redCircle.style.width = '10px';
+    redCircle.style.height = '10px';
+    redCircle.style.background = '#ff4444';
+    redCircle.style.borderRadius = '50%';
+    redCircle.style.transform = 'translate(-50%, -50%)';
+    redCircle.style.transition = 'all 2s ease-out';
+    
+    btn2.appendChild(redCircle);
+    
+    // Iniciar la animación después de un momento
+    setTimeout(() => {
+      redCircle.style.width = '94px';
+      redCircle.style.height = '94px';
+      
+      // Cuando termine la animación, mostrar el texto y siguiente verso
+      setTimeout(() => {
+        typewriter(text2, "A button is a circle with its own circle.", 40, () => {
+          verse3.classList.remove('hidden');
+          autoScroll(verse3);
+        });
+      }, 2000);
+    }, 100);
+  });
+
+  const dragbtn = document.getElementById('dragbtn');
+  const dropzone = document.getElementById('dropzone');
+  const text3 = document.getElementById('text3');
+  const verse4 = document.getElementById('verse4');
+
+  dragbtn.ondragstart = e => e.dataTransfer.setData('text/plain', '');
+  dropzone.ondragover = e => { e.preventDefault(); dropzone.classList.add('over'); };
+  dropzone.ondragleave = () => dropzone.classList.remove('over');
+  dropzone.ondrop = e => {
+    e.preventDefault();
+    dropzone.classList.remove('over');
+    dragbtn.style.position = 'absolute';
+    dragbtn.style.top = '50%';
+    dragbtn.style.left = '50%';
+    dragbtn.style.transform = 'translate(-50%, -50%)';
+    dragbtn.removeAttribute('draggable');
+    dragbtn.addEventListener('click', () => {
+      dragbtn.disabled = true;
+      typewriter(text3, "Pressed, pressed again, not pressure, only place.", 40, () => {
+        verse4.classList.remove('hidden');
+        autoScroll(verse4);
+      });
+    }, { once: true });
+  };
+
+  const btnNoHole = document.getElementById('btn-nohole');
+  const btnHoles = document.getElementById('btn-holes');
+  const text6 = document.getElementById('text6');
+  const verse7 = document.getElementById('verse7');
+
+  btnNoHole.addEventListener('click', () => {
+    btnNoHole.disabled = true;
+    typewriter(text6, "More than four holes. Less than one.", 40, () => {
+      verse7.classList.remove('hidden');
+      autoScroll(verse7);
+    });
+  });
+
+  btnHoles.addEventListener('click', () => {
+    btnHoles.disabled = true;
+    typewriter(text6, "More than four holes. Less than one.", 40, () => {
+      verse7.classList.remove('hidden');
+      autoScroll(verse7);
+    });
+  });
+
+
+  const verse9 = document.getElementById('verse9');
+  const cbOne = document.getElementById('cb-one');
+  const cbTwoWrap = document.getElementById('cb-two-wrap');
+  const cbTwo = document.getElementById('cb-two');
+  const cbThreeWrap = document.getElementById('cb-three-wrap');
+  const cbThree = document.querySelectorAll('.cb-three');
+  const text9 = document.getElementById('text9');
+  const text10 = document.getElementById('text10');
+  const verse10 = document.getElementById('verse10');
+  const btnBack = document.getElementById('btn-back');
+  const btnRefresh = document.getElementById('btn-refresh');
+  const btnStop = document.getElementById('btn-stop');
+  const text11 = document.getElementById('text11');
+  const btnOutline = document.getElementById('btn-outline-hole');
+  const text7 = document.getElementById('text7');
+  const verse8 = document.getElementById('verse8');
+  const alignZone = document.getElementById('align-zone');
+  const text8 = document.getElementById('text8');
+  const text11a = document.getElementById('text11a');
+  const text11b = document.getElementById('text11b');
+  const text11c = document.getElementById('text11c');
+  const verse11 = document.getElementById('verse11');
+  const btnScrollUp = document.getElementById('btn-scroll-up');
+  const popupUp = document.getElementById('popup-up');
+  const btnScrollDown = document.getElementById('btn-scroll-down');
+  const text12 = document.getElementById('text12');
+  const verse12 = document.getElementById('verse12');
+  const btnGently = document.getElementById('btn-gently');
+  const text13 = document.getElementById('text13');
+  const verse13 = document.getElementById('verse13');
+  const popup13 = document.getElementById('popup-verse13');
+  const btnClosePopup = document.getElementById('btn-close-popup');
+  const innerButtons = document.getElementById('inner-popup-buttons');
+  const text14 = document.getElementById('text14');
+  const verse14 = document.getElementById('verse14');
+  const btnMaybe = document.getElementById('btn-maybe');
+  const maybeDialog = document.getElementById('maybe-dialog');
+  const btnYes = document.getElementById('btn-yes');
+  const btnNo = document.getElementById('btn-no');
+  const text15 = document.getElementById('text15');
+  const verse15 = document.getElementById('verse15');
+  const btnBecause = document.getElementById('btn-because');
+  const text16 = document.getElementById('text16-content');
+  const verse16 = document.getElementById('verse16');
+  const btnClosePopup2 = document.getElementById('btn-close-popup2');
+  const wordOptions = document.getElementById('word-options');
+  const text17 = document.getElementById('text17');
+  const btnBefore = document.createElement('button');
+
+
+  cbOne.addEventListener('change', () => {
+    if (cbOne.checked) {
+      cbTwoWrap.classList.remove('hidden');
+    } else {
+      cbTwoWrap.classList.add('hidden');
+    }
+  });
+
+  cbTwo.addEventListener('change', () => {
+    if (cbTwo.checked) {
+      typewriter(text9, 'Two buttons are a system.', 40, () => {
+        cbThreeWrap.classList.remove('hidden');
+      });
+    } else {
+      cbThreeWrap.classList.add('hidden');
+    }
+  });
+
+cbThree.forEach(cb => {
+  cb.addEventListener('change', () => {
+    if ([...cbThree].every(el => el.checked)) {
+      typewriter(text10, 'Three buttons are an alphabet.', 40, () => {
+        verse10.classList.remove('hidden');
+        autoScroll(verse10);
+      });
+    }
+  });
+});
+
+
+
+
+
+let accumulatedText = "";
+
+
+btnBack.addEventListener('click', () => {
+  btnBack.disabled = true;
+  typewriter(text11a, "In browsers there are buttons with back in them.\nA back is not a front.", 40, () => {
+    btnRefresh.style.visibility = 'visible';
+  });
+});
+
+btnRefresh.addEventListener('click', () => {
+  btnRefresh.disabled = true;
+  typewriter(text11b, "Refresh is not a rinse.", 40, () => {
+    btnStop.style.visibility = 'visible';
+  });
+});
+
+btnStop.addEventListener('click', () => {
+  btnStop.disabled = true;
+  typewriter(text11c, "Stop is a square pretending to be a door.", 40, () => {
+    verse11.classList.remove('hidden');
+  });
+});
+
+  // Inicialmente ocultamos los botones 2 y 3
+  btnRefresh.style.visibility = 'hidden';
+  btnStop.style.visibility = 'hidden';
+
+
+
+btnScrollUp.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  popupUp.classList.remove('hidden');
+});
+
+btnScrollDown.addEventListener('click', () => {
+  popupUp.classList.add('hidden');
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  typewriter(text12, "Buttoned-up, buttoned-down.", 40, () => {
+    verse12.classList.remove('hidden');
+  });
+});
+
+
+let holdStart;
+
+btnGently.addEventListener('mousedown', () => {
+  holdStart = Date.now();
+});
+
+btnGently.addEventListener('mouseup', () => {
+  const duration = Date.now() - holdStart;
+  if (duration >= 2000) {
+    btnGently.disabled = true;
+
+    const text13 = document.getElementById('text13');
+    const verse13 = document.getElementById('verse13');
+    const popup13 = document.getElementById('popup-verse13');
+
+    revealWords(
+      ["Nothing", "stays", "unless", "it's", "fastened", "gently."],
+      text13,
+      1000,
+      0,
+      () => {
+        verse13.classList.remove('hidden');
+        popup13.classList.remove('hidden');
+      }
+    );
+  }
+});
+
+
+
+function revealWords(words, el, delay, i = 0, cb) {
+  if (i < words.length) {
+    el.textContent += (i > 0 ? ' ' : '') + words[i];
+    setTimeout(() => revealWords(words, el, delay, i + 1, cb), delay);
+  } else if (cb) {
+    cb();
+  }
+}
+
+btnClosePopup.addEventListener('click', () => {
+  popup13.classList.add('hidden');
+  typewriter(text14, "Nothing opens unless it forgets how it closed.", 40, () => {
+    document.getElementById('verse14').classList.remove('hidden');
+  });
+});
+
+btnClosePopup.addEventListener('mouseover', () => {
+  innerButtons.classList.remove('hidden');
+});
+
+
+btnMaybe.addEventListener('click', () => {
+  maybeDialog.classList.remove('hidden');
+});
+
+btnYes.addEventListener('click', () => {
+  typewriter(text15, "A button is a maybe with a loop.", 40, () => {
+    verse15.classList.remove('hidden');
+  });
+});
+
+// Configurar el botón "Before"
+btnBefore.id = 'btn-before';
+btnBefore.textContent = 'Before';
+btnBefore.className = 'hidden';
+btnBecause.after(btnBefore);
+
+let beforeClicked = false;
+
+btnBecause.addEventListener('click', () => {
+  btnBecause.classList.add('strike');
+  btnBefore.classList.remove('hidden');
+  btnBecause.disabled = true;
+});
+
+btnBefore.addEventListener('click', () => {
+  if (beforeClicked) return;
+  beforeClicked = true;
+
+  btnBefore.disabled = true;
+  text16.textContent = '';
+
+  // Escribir texto cuando se hace clic en "Before"
+  typewriter(text16, "A button is not because but before.", 40, () => {
+    verse16.classList.remove('hidden');
+    // AQUÍ ES LA CORRECCIÓN: mostrar el botón ✖ después del texto
+    btnClosePopup2.classList.remove('hidden');
+  });
+});
+
+// Event listener para el botón ✖
+btnClosePopup2.addEventListener('click', () => {
+  btnClosePopup2.classList.add('hidden');
+  wordOptions.classList.remove('hidden');
+});
+
+let guessRevealed = false;
+
+wordOptions.querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (guessRevealed) return;
+    if (btn.textContent.toLowerCase() === 'button') {
+      guessRevealed = true;
+      typewriter(text17, "To button is not to close but to guess.", 40, () => {
+        // Después de escribir "To button is not to close but to guess.", mostrar el siguiente verso
+        const verse17 = document.getElementById('verse17');
+        const text19 = document.getElementById('text19');
+        const text20 = document.getElementById('text20');
+        
+        verse17.classList.remove('hidden');
+        
+        // Primera línea: "So buttons."
+        setTimeout(() => {
+          typewriter(text19, "So buttons.", 40, () => {
+            // Segunda línea: "So many buttons."
+            setTimeout(() => {
+              typewriter(text20, "So many buttons.", 40, () => {
+                // Iniciar la animación loca
+                startCrazyAnimation();
+              });
+            }, 1000);
+          });
+        }, 1000);
+      });
+    }
+  });
+});
+
+function startCrazyAnimation() {
+  const verse18 = document.getElementById('verse18');
+  const crazyCheckboxes = document.getElementById('crazy-checkboxes');
+  const btnFinal = document.getElementById('btn-final');
+  const text21 = document.getElementById('text21');
+  
+  verse18.classList.remove('hidden');
+  btnFinal.classList.remove('hidden');
+  
+  // Crear checkboxes aleatorios
+  const checkboxes = [];
+  for (let i = 0; i < 100; i++) {
+    const label = document.createElement('label');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = Math.random() > 0.5;
+    
+    // Estilos para los checkboxes
+    checkbox.style.transform = 'scale(2)';
+    checkbox.style.accentColor = checkbox.checked ? '#4A90E2' : '#ffffff';
+    
+    label.appendChild(checkbox);
+    label.style.position = 'absolute';
+    label.style.left = Math.random() * 90 + '%';
+    label.style.top = Math.random() * 90 + '%';
+    label.style.transform = `rotate(${Math.random() * 360}deg)`;
+    label.style.display = 'block';
+    label.style.width = '20px';
+    label.style.height = '20px';
+    
+    crazyCheckboxes.appendChild(label);
+    checkboxes.push(checkbox);
+  }
+  
+  // Animación que cambia los checkboxes constantemente
+  const interval = setInterval(() => {
+    checkboxes.forEach(cb => {
+      if (Math.random() > 0.7) {
+        cb.checked = !cb.checked;
+        cb.style.accentColor = cb.checked ? '#4A90E2' : '#ffffff';
+      }
+    });
+    
+    // Mover algunos checkboxes
+    const labels = crazyCheckboxes.querySelectorAll('label');
+    labels.forEach(label => {
+      if (Math.random() > 0.9) {
+        label.style.left = Math.random() * 90 + '%';
+        label.style.top = Math.random() * 90 + '%';
+        label.style.transform = `rotate(${Math.random() * 360}deg)`;
+      }
+    });
+  }, 200);
+  
+  // Botón para terminar la animación
+  btnFinal.addEventListener('click', () => {
+    clearInterval(interval);
+    verse18.classList.add('hidden');
+    
+    // Crear un nuevo elemento para "So buttoning." en el flujo normal del documento
+    const finalSection = document.createElement('section');
+    
+    const finalText = document.createElement('p');
+    finalSection.appendChild(finalText);
+    
+    document.body.appendChild(finalSection);
+    
+    typewriter(finalText, "So buttoning.", 60);
+  }, { once: true });
+}
+
+  btnOutline?.addEventListener('click', () => {
+    btnOutline.disabled = true;
+    typewriter(text7, "A hole may be a button. A button may not be a hole.", 40, () => {
+      setTimeout(() => {
+        verse8.classList.remove('hidden');
+
+        const alignBtn1 = document.getElementById('align-btn1');
+        const alignBtn2 = document.getElementById('align-btn2');
+
+        alignBtn1.addEventListener('dragstart', e => {
+          e.dataTransfer.setData('text/plain', 'btn1');
+        });
+        alignBtn2.addEventListener('dragstart', e => {
+          e.dataTransfer.setData('text/plain', 'btn2');
+        });
+
+        let btn1Dropped = false;
+        let btn2Dropped = false;
+
+        alignZone.addEventListener('dragover', e => e.preventDefault());
+        alignZone.addEventListener('drop', e => {
+          e.preventDefault();
+          const data = e.dataTransfer.getData('text/plain');
+          if (data === 'btn1' && !btn1Dropped) {
+            alignZone.appendChild(alignBtn1);
+            btn1Dropped = true;
+          } else if (data === 'btn2' && !btn2Dropped) {
+            alignZone.appendChild(alignBtn2);
+            btn2Dropped = true;
+          }
+            if (btn1Dropped && btn2Dropped) {
+        typewriter(text8, "One button is not alone if the next is aligned.", 40, () => {
+            verse9.classList.remove('hidden');
+            autoScroll(verse9);
+        });
+        }
+        });
+      }, 1000);
+    });
+  });
+});
+
+</script>
+</body>
+</html>
