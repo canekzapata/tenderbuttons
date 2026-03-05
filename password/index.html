@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PASSWORD</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta property="og:title" content="Password">
+  <meta property="og:type" content="article" />
+  <meta property="og:description" content="a poem from the tender buttons collection by canekzapata.net">
+  <meta property="og:url" content="https://canekzapata.net/tenderbuttons/password/index.html">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <style>
+    body {
+      background: #111;
+      color: #eee;
+      font-family: monospace;
+      font-size: 3vmin;
+      margin: 0;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+
+    section {
+      max-width: 540px;
+      margin: 3rem auto;
+    }
+
+    .hidden { display: none; }
+
+    .poem-line {
+      color: #ccc;
+      margin: 0.3rem 0;
+      min-height: 1.3em;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8em;
+      color: #777;
+      margin-bottom: 0.3rem;
+      letter-spacing: 0.05em;
+    }
+
+    input[type="password"],
+    input[type="text"] {
+      background: #1a1a1a;
+      color: #eee;
+      border: 1px solid #444;
+      padding: 0.6rem 0.8rem;
+      width: 100%;
+      font-family: monospace;
+      font-size: 1em;
+      margin-bottom: 0.75rem;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    input:focus { border-color: #888; }
+
+    button {
+      background: #1e1e1e;
+      color: #eee;
+      border: 1px solid #555;
+      padding: 0.5rem 1.2rem;
+      margin: 0.25rem 0.25rem 0.25rem 0;
+      cursor: pointer;
+      font-family: monospace;
+      font-size: 0.9em;
+      transition: background 0.15s;
+    }
+
+    button:hover:not(:disabled) { background: #333; }
+    button:disabled { opacity: 0.35; cursor: default; }
+    .strike { text-decoration: line-through; opacity: 0.45; }
+
+    /* Requirements */
+    #requirements {
+      list-style: none;
+      padding: 0;
+      margin: 0.5rem 0 0.75rem;
+      font-size: 0.82em;
+    }
+
+    #requirements li { padding: 0.15rem 0; }
+    .req-fail { color: #ff7875; }
+    .req-pass { color: #73d13d; }
+
+    /* Loading bar */
+    #check-bar-wrap {
+      width: 100%;
+      height: 2px;
+      background: #2a2a2a;
+      margin: 1rem 0;
+    }
+
+    #check-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: #73d13d;
+    }
+
+    /* Strength meter */
+    #strength-display {
+      font-size: 1.5em;
+      text-align: center;
+      padding: 1rem;
+      border: 1px solid #333;
+      margin: 1rem 0;
+      letter-spacing: 0.08em;
+      min-height: 3.5em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Sticky note */
+    #sticky-note {
+      background: #fffacd;
+      color: #333;
+      padding: 1rem 1.2rem 1.2rem;
+      margin: 1rem 0;
+      transform: rotate(-0.6deg);
+      transition: opacity 1.5s;
+      position: relative;
+    }
+
+    #sticky-note::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 36px;
+      height: 12px;
+      background: rgba(255, 240, 100, 0.6);
+    }
+
+    #sticky-note .note-warning {
+      font-size: 0.7em;
+      color: #aaa;
+      font-style: italic;
+      margin: 0 0 0.6rem;
+    }
+
+    #pw-note {
+      background: transparent;
+      color: #333;
+      border: none;
+      border-bottom: 1px dashed #bbb;
+      width: 100%;
+      font-family: monospace;
+      font-size: 0.9em;
+      resize: none;
+      padding: 0.2rem 0;
+      outline: none;
+    }
+
+    /* Key/lock drag */
+    #key-lock-area {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+
+    #key-draggable {
+      font-size: 2.5rem;
+      cursor: grab;
+      display: inline-block;
+      user-select: none;
+      padding: 0.4rem;
+      border: 1px dashed #555;
+      transition: opacity 0.3s;
+    }
+
+    #key-draggable:active { cursor: grabbing; }
+
+    #lock-drop {
+      font-size: 2.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 68px;
+      height: 68px;
+      border: 2px dashed #444;
+      transition: border-color 0.2s, transform 1s ease-in, opacity 1s ease-in;
+    }
+
+    #lock-drop.dragover {
+      border-color: #aaa;
+      background: #1e1e1e;
+    }
+
+    #drag-hint {
+      font-size: 0.75em;
+      color: #555;
+      font-style: italic;
+    }
+
+    /* Google button */
+    #btn-google {
+      background: #1a5ed4;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.5rem;
+      font-size: 0.9em;
+      margin-top: 0.75rem;
+    }
+
+    #btn-google:hover:not(:disabled) { background: #1448a8; }
+
+    /* Character rain */
+    .char-rain {
+      position: fixed;
+      top: -2rem;
+      font-family: monospace;
+      color: #3a3a3a;
+      pointer-events: none;
+      animation: fall linear forwards;
+      z-index: 1000;
+    }
+
+    @keyframes fall {
+      to { top: 110vh; opacity: 0; }
+    }
+
+    /* Divider between sections */
+    section + section {
+      border-top: 1px solid #1e1e1e;
+      padding-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Verse 1: enter your secret -->
+<section id="v1">
+  <label for="input-secret">enter your secret</label>
+  <input type="password" id="input-secret" autocomplete="new-password" placeholder="••••••••">
+  <button id="btn-tell">tell the machine</button>
+  <p id="t1" class="poem-line"></p>
+</section>
+
+<!-- Verse 2: the machine checks -->
+<section id="v2" class="hidden">
+  <div id="check-bar-wrap"><div id="check-bar-fill"></div></div>
+  <p id="t2a" class="poem-line"></p>
+  <p id="t2b" class="poem-line"></p>
+</section>
+
+<!-- Verse 3: requirements hell -->
+<section id="v3" class="hidden">
+  <label for="pw-create">create a new password</label>
+  <input type="password" id="pw-create" autocomplete="new-password">
+  <ul id="requirements">
+    <li id="req-length" class="req-fail">&#10007; At least 8 characters</li>
+  </ul>
+  <button id="btn-give-up" class="hidden">I give up</button>
+  <p id="t3a" class="poem-line"></p>
+  <p id="t3b" class="poem-line"></p>
+  <p id="t3c" class="poem-line"></p>
+  <p id="t3d" class="poem-line"></p>
+</section>
+
+<!-- Verse 4: secure / insecure / expired -->
+<section id="v4" class="hidden">
+  <div id="strength-display">checking...</div>
+  <p id="t4a" class="poem-line"></p>
+  <p id="t4b" class="poem-line"></p>
+  <p id="t4c" class="poem-line"></p>
+</section>
+
+<!-- Verse 5: forgotten / reset / forgotten again -->
+<section id="v5" class="hidden">
+  <button id="btn-forgot">I forgot my password</button>
+  <button id="btn-reset" class="hidden">Reset password</button>
+  <button id="btn-forgot2" class="hidden">I forgot again</button>
+  <p id="t5a" class="poem-line"></p>
+  <p id="t5b" class="poem-line"></p>
+  <p id="t5c" class="poem-line"></p>
+  <p id="t5d" class="poem-line"></p>
+</section>
+
+<!-- Verse 6: do not write it down -->
+<section id="v6" class="hidden">
+  <p id="t6a" class="poem-line"></p>
+  <div id="sticky-note">
+    <p class="note-warning">&#9888; do not write your password here</p>
+    <textarea id="pw-note" rows="2" placeholder="..."></textarea>
+  </div>
+  <p id="t6b" class="poem-line"></p>
+  <p id="t6c" class="poem-line"></p>
+  <p id="t6d" class="poem-line"></p>
+</section>
+
+<!-- Verse 7: strong / weak / Password123 -->
+<section id="v7" class="hidden">
+  <button id="btn-strong">STRONG</button>
+  <button id="btn-weak">weak</button>
+  <button id="btn-p123">Password123</button>
+  <p id="t7a" class="poem-line"></p>
+  <p id="t7b" class="poem-line"></p>
+</section>
+
+<!-- Verse 8: key / lock / Google -->
+<section id="v8" class="hidden">
+  <p id="t8a" class="poem-line"></p>
+  <div id="key-lock-area">
+    <span id="key-draggable" draggable="true" title="drag me">&#128273;</span>
+    <span id="lock-drop">&#128274;</span>
+    <span id="drag-hint">&larr; drag the key to the lock</span>
+  </div>
+  <p id="t8b" class="poem-line"></p>
+  <p id="t8c" class="poem-line"></p>
+  <button id="btn-google" class="hidden">Login with Google</button>
+  <p id="t8d" class="poem-line"></p>
+</section>
+
+<!-- Verse 9: finale -->
+<section id="v9" class="hidden">
+  <p id="t9a" class="poem-line"></p>
+  <p id="t9b" class="poem-line"></p>
+  <p id="t9c" class="poem-line"></p>
+</section>
+
+<script>
+function typewriter(el, text, speed, cb) {
+  speed = speed || 45;
+  el.textContent = '';
+  var i = 0;
+  var t = setInterval(function() {
+    el.textContent += text[i++];
+    if (i >= text.length) {
+      clearInterval(t);
+      if (cb) cb();
+    }
+  }, speed);
+}
+
+function show(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.remove('hidden');
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+
+  // ── VERSE 1 ─────────────────────────────────────────────
+  var inputSecret = document.getElementById('input-secret');
+  var btnTell = document.getElementById('btn-tell');
+  var t1 = document.getElementById('t1');
+
+  function submitSecret() {
+    if (!inputSecret.value) return;
+    btnTell.disabled = true;
+    inputSecret.disabled = true;
+    typewriter(t1, 'A password is a secret told to a machine.', 45, function() {
+      show('v2');
+      startCheck();
+    });
+  }
+
+  btnTell.addEventListener('click', submitSecret);
+  inputSecret.addEventListener('keydown', function(e) { if (e.key === 'Enter') submitSecret(); });
+
+  // ── VERSE 2 ─────────────────────────────────────────────
+  function startCheck() {
+    var fill = document.getElementById('check-bar-fill');
+    var t2a = document.getElementById('t2a');
+    var t2b = document.getElementById('t2b');
+
+    requestAnimationFrame(function() {
+      fill.style.transition = 'width 2s ease';
+      fill.style.width = '100%';
+    });
+
+    setTimeout(function() {
+      typewriter(t2a, 'The machine does not care.', 45, function() {
+        typewriter(t2b, 'The machine only checks.', 45, function() {
+          setTimeout(function() { show('v3'); }, 800);
+        });
+      });
+    }, 2200);
+  }
+
+  // ── VERSE 3 ─────────────────────────────────────────────
+  var pwCreate = document.getElementById('pw-create');
+  var reqs = document.getElementById('requirements');
+  var btnGiveUp = document.getElementById('btn-give-up');
+  var reqState = 0;
+
+  function updateRequirements(val) {
+    if (reqState >= 4) return;
+
+    var hasLength  = val.length >= 8;
+    var hasUpper   = /[A-Z]/.test(val);
+    var hasNumber  = /[0-9]/.test(val);
+    var hasSpecial = /[!@#$%^&*]/.test(val);
+
+    var reqLength  = document.getElementById('req-length');
+    var reqUpper   = document.getElementById('req-upper');
+    var reqNumber  = document.getElementById('req-number');
+    var reqSpecial = document.getElementById('req-special');
+
+    if (reqLength) {
+      reqLength.className = hasLength ? 'req-pass' : 'req-fail';
+      reqLength.textContent = (hasLength ? '\u2713' : '\u2717') + ' At least 8 characters';
+    }
+
+    if (hasLength && reqState === 0) {
+      reqState = 1;
+      var li = document.createElement('li');
+      li.id = 'req-upper'; li.className = 'req-fail';
+      li.textContent = '\u2717 At least one uppercase';
+      reqs.appendChild(li);
+    }
+    if (reqUpper) {
+      reqUpper.className = hasUpper ? 'req-pass' : 'req-fail';
+      reqUpper.textContent = (hasUpper ? '\u2713' : '\u2717') + ' At least one uppercase';
+    }
+
+    if (hasLength && hasUpper && reqState === 1) {
+      reqState = 2;
+      var li2 = document.createElement('li');
+      li2.id = 'req-number'; li2.className = 'req-fail';
+      li2.textContent = '\u2717 At least one number';
+      reqs.appendChild(li2);
+    }
+    var reqNum = document.getElementById('req-number');
+    if (reqNum) {
+      reqNum.className = hasNumber ? 'req-pass' : 'req-fail';
+      reqNum.textContent = (hasNumber ? '\u2713' : '\u2717') + ' At least one number';
+    }
+
+    if (hasLength && hasUpper && hasNumber && reqState === 2) {
+      reqState = 3;
+      var li3 = document.createElement('li');
+      li3.id = 'req-special'; li3.className = 'req-fail';
+      li3.textContent = '\u2717 At least one of these: !@#$%^&*';
+      reqs.appendChild(li3);
+    }
+    var reqSp = document.getElementById('req-special');
+    if (reqSp) {
+      reqSp.className = hasSpecial ? 'req-pass' : 'req-fail';
+      reqSp.textContent = (hasSpecial ? '\u2713' : '\u2717') + ' At least one of these: !@#$%^&*';
+    }
+
+    if (hasLength && hasUpper && hasNumber && hasSpecial && reqState === 3) {
+      reqState = 4;
+      var li4 = document.createElement('li');
+      li4.id = 'req-reason'; li4.className = 'req-fail';
+      li4.textContent = '\u2717 At least one reason to give up';
+      reqs.appendChild(li4);
+      btnGiveUp.classList.remove('hidden');
+    }
+  }
+
+  pwCreate.addEventListener('input', function() { updateRequirements(pwCreate.value); });
+
+  btnGiveUp.addEventListener('click', function() {
+    btnGiveUp.disabled = true;
+    pwCreate.disabled = true;
+    var reqReason = document.getElementById('req-reason');
+    if (reqReason) {
+      reqReason.className = 'req-pass';
+      reqReason.textContent = '\u2713 At least one reason to give up';
+    }
+
+    var t3a = document.getElementById('t3a');
+    var t3b = document.getElementById('t3b');
+    var t3c = document.getElementById('t3c');
+    var t3d = document.getElementById('t3d');
+
+    setTimeout(function() {
+      typewriter(t3a, 'Eight characters. At least one uppercase.', 45, function() {
+        typewriter(t3b, 'At least one number.', 45, function() {
+          typewriter(t3c, 'At least one of these: !@#$%^&*', 45, function() {
+            typewriter(t3d, 'At least one reason to give up.', 45, function() {
+              show('v4');
+              startStrengthMeter();
+            });
+          });
+        });
+      });
+    }, 400);
+  });
+
+  // ── VERSE 4 ─────────────────────────────────────────────
+  function startStrengthMeter() {
+    var display = document.getElementById('strength-display');
+    var t4a = document.getElementById('t4a');
+    var t4b = document.getElementById('t4b');
+    var t4c = document.getElementById('t4c');
+
+    var states = [
+      { text: 'SECURE \u2713',   color: '#73d13d' },
+      { text: 'INSECURE \u2717', color: '#ff7875' },
+      { text: 'SECURE \u2713',   color: '#73d13d' },
+      { text: 'INSECURE \u2717', color: '#ff7875' },
+      { text: 'SECURE \u2713',   color: '#73d13d' },
+      { text: 'INSECURE \u2717', color: '#ff7875' },
+      { text: 'EXPIRED',         color: '#666' },
+    ];
+
+    display.textContent = 'checking...';
+    display.style.color = '#666';
+
+    var idx = 0;
+    var interval = setInterval(function() {
+      var s = states[idx++];
+      display.textContent = s.text;
+      display.style.color = s.color;
+      if (idx >= states.length) {
+        clearInterval(interval);
+        setTimeout(function() {
+          typewriter(t4a, 'Your password is not secure.', 45, function() {
+            typewriter(t4b, 'Your password is not insecure.', 45, function() {
+              typewriter(t4c, 'Your password is expired.', 45, function() {
+                setTimeout(function() { show('v5'); }, 800);
+              });
+            });
+          });
+        }, 700);
+      }
+    }, 380);
+  }
+
+  // ── VERSE 5 ─────────────────────────────────────────────
+  var btnForgot  = document.getElementById('btn-forgot');
+  var btnReset   = document.getElementById('btn-reset');
+  var btnForgot2 = document.getElementById('btn-forgot2');
+  var t5a = document.getElementById('t5a');
+  var t5b = document.getElementById('t5b');
+  var t5c = document.getElementById('t5c');
+  var t5d = document.getElementById('t5d');
+
+  btnForgot.addEventListener('click', function() {
+    btnForgot.disabled = true;
+    typewriter(t5a, 'Password forgotten.', 45, function() {
+      setTimeout(function() { show('btn-reset'); }, 600);
+    });
+  });
+
+  btnReset.addEventListener('click', function() {
+    btnReset.disabled = true;
+    typewriter(t5b, 'Password reset.', 45, function() {
+      setTimeout(function() { show('btn-forgot2'); }, 600);
+    });
+  });
+
+  btnForgot2.addEventListener('click', function() {
+    btnForgot2.disabled = true;
+    typewriter(t5c, 'Password forgotten again.', 45, function() {
+      typewriter(t5d, 'This is not memory. This is Tuesday.', 45, function() {
+        setTimeout(function() {
+          show('v6');
+          startStickyNote();
+        }, 800);
+      });
+    });
+  });
+
+  // ── VERSE 6 ─────────────────────────────────────────────
+  function startStickyNote() {
+    var t6a = document.getElementById('t6a');
+    var stickyNote = document.getElementById('sticky-note');
+    var pwNote = document.getElementById('pw-note');
+    var t6b = document.getElementById('t6b');
+    var t6c = document.getElementById('t6c');
+    var t6d = document.getElementById('t6d');
+
+    typewriter(t6a, 'Do not write your password down.', 45);
+
+    var noteTimer = null;
+    var noteDone = false;
+
+    pwNote.addEventListener('input', function() {
+      if (noteDone) return;
+      if (noteTimer) clearTimeout(noteTimer);
+      if (pwNote.value.length > 3) {
+        noteTimer = setTimeout(function() {
+          noteDone = true;
+          stickyNote.style.opacity = '0';
+          setTimeout(function() {
+            stickyNote.style.display = 'none';
+            typewriter(t6b, 'You wrote it down.', 45, function() {
+              typewriter(t6c, 'You lost the paper.', 45, function() {
+                typewriter(t6d, 'The paper was the password.', 45, function() {
+                  setTimeout(function() { show('v7'); }, 800);
+                });
+              });
+            });
+          }, 1500);
+        }, 900);
+      }
+    });
+  }
+
+  // ── VERSE 7 ─────────────────────────────────────────────
+  var btnStrong = document.getElementById('btn-strong');
+  var btnWeak   = document.getElementById('btn-weak');
+  var btnP123   = document.getElementById('btn-p123');
+  var t7a = document.getElementById('t7a');
+  var t7b = document.getElementById('t7b');
+
+  btnStrong.addEventListener('click', function() {
+    btnStrong.classList.add('strike');
+    btnStrong.disabled = true;
+  });
+
+  btnWeak.addEventListener('click', function() {
+    btnWeak.classList.add('strike');
+    btnWeak.disabled = true;
+  });
+
+  btnP123.addEventListener('click', function() {
+    btnP123.disabled = true;
+    typewriter(t7a, 'Password123 is not a password.', 45, function() {
+      typewriter(t7b, 'Password123 is an apology.', 45, function() {
+        setTimeout(function() {
+          show('v8');
+          startKeyLock();
+        }, 800);
+      });
+    });
+  });
+
+  // ── VERSE 8 ─────────────────────────────────────────────
+  function startKeyLock() {
+    var t8a = document.getElementById('t8a');
+    var keyDrag  = document.getElementById('key-draggable');
+    var lockDrop = document.getElementById('lock-drop');
+    var dragHint = document.getElementById('drag-hint');
+    var t8b = document.getElementById('t8b');
+    var t8c = document.getElementById('t8c');
+    var btnGoogle = document.getElementById('btn-google');
+    var t8d = document.getElementById('t8d');
+    var keyUsed = false;
+
+    typewriter(t8a, 'The password is a key.', 45);
+
+    function handleKeyDrop() {
+      if (keyUsed) return;
+      keyUsed = true;
+
+      keyDrag.style.opacity = '0.25';
+      keyDrag.draggable = false;
+      lockDrop.textContent = '\uD83D\uDD13'; // open lock
+      lockDrop.classList.remove('dragover');
+      if (dragHint) dragHint.style.display = 'none';
+
+      typewriter(t8b, 'The key is not the lock.', 45, function() {
+        setTimeout(function() {
+          lockDrop.style.transform = 'translateX(200px)';
+          lockDrop.style.opacity = '0';
+          setTimeout(function() {
+            typewriter(t8c, 'The lock is somewhere else.', 45, function() {
+              show('btn-google');
+            });
+          }, 1000);
+        }, 500);
+      });
+    }
+
+    // Drag and drop
+    keyDrag.addEventListener('dragstart', function(e) {
+      e.dataTransfer.setData('text/plain', 'key');
+    });
+
+    lockDrop.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      lockDrop.classList.add('dragover');
+    });
+
+    lockDrop.addEventListener('dragleave', function() {
+      lockDrop.classList.remove('dragover');
+    });
+
+    lockDrop.addEventListener('drop', function(e) {
+      e.preventDefault();
+      handleKeyDrop();
+    });
+
+    // Click fallback (for mobile / accessibility)
+    keyDrag.addEventListener('click', function() {
+      if (!keyUsed) handleKeyDrop();
+    });
+
+    btnGoogle.addEventListener('click', function() {
+      btnGoogle.disabled = true;
+      typewriter(t8d, 'Login with Google.', 45, function() {
+        setTimeout(function() {
+          show('v9');
+          startFinale();
+        }, 600);
+      });
+    });
+  }
+
+  // ── VERSE 9: FINALE ─────────────────────────────────────
+  function startFinale() {
+    var t9a = document.getElementById('t9a');
+    var t9b = document.getElementById('t9b');
+    var t9c = document.getElementById('t9c');
+
+    var chars = '!@#$%^&*ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz123456789';
+
+    function spawnChar() {
+      var span = document.createElement('span');
+      span.className = 'char-rain';
+      span.textContent = chars[Math.floor(Math.random() * chars.length)];
+      span.style.left = (Math.random() * 95) + 'vw';
+      span.style.animationDuration = (2 + Math.random() * 3) + 's';
+      span.style.fontSize = (0.5 + Math.random() * 1.2) + 'rem';
+      document.body.appendChild(span);
+      span.addEventListener('animationend', function() { span.remove(); });
+    }
+
+    var rainInterval = setInterval(function() {
+      spawnChar(); spawnChar(); spawnChar();
+    }, 180);
+
+    typewriter(t9a, 'So password.', 60, function() {
+      setTimeout(function() {
+        typewriter(t9b, 'So passwords.', 60, function() {
+          setTimeout(function() {
+            typewriter(t9c, 'So passwording.', 60, function() {
+              setTimeout(function() { clearInterval(rainInterval); }, 3000);
+            });
+          }, 800);
+        });
+      }, 800);
+    });
+  }
+
+}); // DOMContentLoaded
+</script>
+</body>
+</html>
